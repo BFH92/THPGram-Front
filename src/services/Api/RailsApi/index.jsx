@@ -28,7 +28,7 @@ export default class APIManager {
     const response = await API.delete('/logout');
     return response;
   }
-
+  
   static async login(email, password) {
     API.interceptors.request.use(({ headers, ...config }) => (
       {
@@ -38,10 +38,9 @@ export default class APIManager {
             'Content-Type': 'application/json',
         },
     }));
-    
-  delete axios.defaults.headers.common["Authorization"];
   let token;
-  const response = await API.post('/login', { "user":{email, password }});
+  const response = await API.post('/login', 
+  { "user":{email, password }},);
    token = await response.headers.authorization
    token = token.replace(/Bearer /g, "");
    Cookies.set('token',token)
