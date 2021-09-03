@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Link } from 'react-router-dom';
+import APIManager from '../../services/Api/RailsApi';
 
 const LoginForm = () => {
   
@@ -34,6 +35,26 @@ const LoginForm = () => {
     },
   }));
   const classes = useStyles();
+  const [Email, setEmail] = useState("a@a.com");
+  const [Password, setPassword] = useState("azerty");
+  const [Name, setName] = useState("");
+  const saveEmail=(e) => {
+    setEmail(e.target.value) //TODO: voir comment le rendre + propre
+    }
+    const saveUserName=(e) => {
+      setName(e.target.value) 
+    }
+    const savePassword=(e) => {
+      setPassword(e.target.value) 
+      console.log(Password)
+    }
+  const login = async (e) => {
+    e.preventDefault();
+    
+    const response = await APIManager.login(Email, Password);
+  
+    console.log(response)
+  };
   return (
     <>
     <Container component="main" maxWidth="xs">
@@ -54,7 +75,7 @@ const LoginForm = () => {
             name="email"
             autoComplete="email"
             autoFocus
-            //onChange={saveEmail}
+            onChange={saveEmail}
           />
           <TextField
             variant="outlined"
@@ -66,21 +87,22 @@ const LoginForm = () => {
             type="password"
             id="password"
             autoComplete="current-password"
-            //onChange={savePassword}
+            onChange={savePassword}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          <Button
+        <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
-            //onClick={()=>{dispatch(FetchToLogin())}}
-          >
-            Sign In
+            //onClick={()=>{dispatch(FetchSignUp())}}
+            onClick={login} >
+          
+            Log in
           </Button>
           <Grid container>
             <Grid item xs>

@@ -1,5 +1,5 @@
-import React from 'react';
-//import Cookies from 'js-cookie'
+import React,{useState} from 'react';
+import Cookies from 'js-cookie'
 //import { useDispatch, useSelector } from 'react-redux';
 //import {FetchCurrentUserFailed, FetchCurrentUserRequest, FetchCurrentUserSuccess, RegisterCurrentEmail,RegisterCurrentUserName,RegisterCurrentPassword} from '../../Redux';
 import Avatar from '@material-ui/core/Avatar';
@@ -14,9 +14,24 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Link } from 'react-router-dom';
+import APIManager from '../../services/Api/RailsApi';
+
 //import { useHistory } from 'react-router-dom';
 const SignUpForm = () => {
-    
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
+  const [Name, setName] = useState("");
+  
+  const saveEmail=(e) => {
+  setEmail(e.target.value) //TODO: voir comment le rendre + propre
+  }
+  const saveUserName=(e) => {
+    setName(e.target.value) 
+  }
+  const savePassword=(e) => {
+    setPassword(e.target.value) 
+  }
+    let token;
     const useStyles = makeStyles((theme) => ({
       paper: {
         marginTop: theme.spacing(8),
@@ -37,6 +52,40 @@ const SignUpForm = () => {
       },
     }));
     const classes = useStyles();
+    const data = {
+      'user':{
+      'email': 'bfigeaaa@gmail.Com',
+      'password':'azerty'
+      }
+    }
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await APIManager.register(Email, Password);
+    console.log(response);
+    
+    console.log(token)
+ };
+
+  const logout = async (e) => {
+    e.preventDefault();
+
+    const response = await APIManager.logout();
+    let tok = Cookies.get('token')
+    console.log(tok)
+    Cookies.remove('token')
+  
+};
+const login = async (e) => {
+  e.preventDefault();
+
+  const response = await APIManager.login(Email, Password);
+
+  token = await response.headers.authorization
+  token =token.replace(/Bearer /g, "");
+  Cookies.set('token',token)
+  console.log(response)
+};
   return (
     <>
     <Container component="main" maxWidth="xs">
@@ -57,7 +106,7 @@ const SignUpForm = () => {
                 label="userName"
                 name="userName"
                 autoComplete="username"
-                //onChange={saveUserName}
+                onChange={saveUserName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -69,7 +118,7 @@ const SignUpForm = () => {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                //onChange={saveEmail}
+                onChange={saveEmail}
               />
             </Grid>
             <Grid item xs={12}>
@@ -82,7 +131,7 @@ const SignUpForm = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                //onChange={savePassword}
+                onChange={savePassword}
               />
             </Grid>
             <Grid item xs={12}>
@@ -99,8 +148,20 @@ const SignUpForm = () => {
             color="primary"
             className={classes.submit}
             //onClick={()=>{dispatch(FetchSignUp())}}
-          >
+            onClick={handleSubmit}
+            >
             Sign Up
+          </Button>
+          
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            //onClick={()=>{dispatch(FetchSignUp())}}
+            onClick={logout}>
+            Log out
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
